@@ -1,26 +1,104 @@
 import React from 'react';
-import logo from './logo.svg';
+import {Route, Link, Switch} from 'react-router-dom';
 import './App.css';
+import store from './store';
+import SideFolder from './components/Folder/SideFolder';
+import MainNote from './components/Note/MainNote'
+import Note from './components/Note/Notes'
+import GoBack from './components/Folder/GoBack'
+import NoteSelected from './components/Note/NoteSelected'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+class App extends React.Component {
+  state = {
+    store,
+    folderId: '',
+    selectItem: ''
+  }
+
+  handleClickFolder = (id) => {
+    this.setState({folderId: id})
+  }
+
+  passFolderId(folderId) {
+    return folderId;
+  }
+
+  handleNoteId = (id) => {
+    this.setState({selectItem: id})
+  }
+
+  
+  render() {
+    const {folders} = this.state.store
+    const {notes} = this.state.store
+
+    return (
+      <div className="App">
+        <nav>
+          <Link to='/'>Noteful</Link>
+        </nav> 
+        <main>
+          <section>
+            <Switch>
+              <Route
+                exact path='/'
+                render = {() =>
+                  <SideFolder 
+                    folders={folders}
+                    notes={notes}
+                    handleClickFolder={this.handleClickFolder}/>}
+              />
+              <Route
+                path='/folder/:name'
+                render = {() =>
+                  <SideFolder 
+                    folders={folders}
+                    notes={notes}
+                    handleClickFolder={this.handleClickFolder}/>}
+              />
+              <Route
+                path='/note/:name'
+                render = {(props) =>
+                  <GoBack 
+                    folders={folders}
+                    notes={notes}
+                    folderId={this.state.folderId}
+                    props={props}/>}
+              />
+            </Switch>
+          </section>
+
+          <section>
+            <Switch>
+              <Route
+                exact path='/'
+                render = {() => 
+                  <MainNote 
+                    items={notes}
+                    handleNoteId={this.handleNoteId}/>}
+              />
+              <Route 
+                path='/folder/:name'
+                render = {() =>
+                  <Note 
+                    folderIds={this.state.folderId}
+                    itemNotes = {notes}
+                    handleNoteId={this.handleNoteId}/>}
+              />
+              <Route 
+                path='/note/:name'
+                render = {() =>
+                  <NoteSelected 
+                  selectedItem = {this.state.selectItem}/>}
+               />
+              </Switch>
+          </section> 
+        </main>
+      </div>
+    );
+  }
+
 }
 
 export default App;
