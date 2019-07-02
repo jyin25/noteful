@@ -92,7 +92,7 @@ class App extends React.Component {
                   <NoteSelected 
                   selectedItem = {this.state.selectItem}/>}
                />
-              </Switch>
+            </Switch>
           </section> 
         </main>
       </div>
